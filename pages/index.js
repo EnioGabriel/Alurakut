@@ -9,7 +9,7 @@ import {
   OrkutNostalgicIconSet,
 } from "../src/lib/AlurakutCommons";
 import { ProfileRelationsBoxWrapper } from "../src/componentes/profileRelations";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function ProfileSidebar(propriedades) {
   return (
@@ -38,8 +38,31 @@ function ProfileSidebar(propriedades) {
   );
 }
 
+function ProfileRelationsBox(propriedades) {
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {propriedades.title} ({propriedades.items.length})
+      </h2>
+      {/* <ul>
+        {seguidores.map((itemAtual) => {
+          return (
+            <li>
+              <a href={`https://github.com${itemAtual}.png`} key={itemAtual.id}>
+                <img src={itemAtual} />
+                <span>{itemAtual}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul> */}
+    </ProfileRelationsBoxWrapper>
+  );
+}
+
 export default function Home() {
   const githubUser = "EnioGabriel";
+  const pessoasFavoritas = ["omariosouto", "peas", "diego3g"];
 
   const [comunidades, setComunidades] = useState([
     {
@@ -49,7 +72,19 @@ export default function Home() {
     },
   ]);
 
-  const pessoasFavoritas = ["omariosouto", "peas", "diego3g"];
+  const [seguidores, setSeguidores] = useState([]);
+
+  useEffect(() => {
+    fetch("https://api.github.com/users/peas/followers")
+      .then((respostaDoServidor) => {
+        return respostaDoServidor.json();
+      })
+      .then((respostaCompleta) => {
+        setSeguidores(respostaCompleta);
+      });
+    // []: 2° parametro que especificia qnd ele irá atualizar dependendo da variavel passada para ele
+    // ele sendo vazio, irá executar apenas uma vez
+  }, []);
 
   return (
     <>
@@ -70,7 +105,7 @@ export default function Home() {
             <h2 className="subTitle">O que você deseja fazer</h2>
             <form
               onSubmit={function handleCriaComunidade(e) {
-                // Pevinindo autoupdate da pagina
+                // Previnindo autoupdate da pagina
                 e.preventDefault();
 
                 // trazendo dados do formulario
@@ -110,9 +145,10 @@ export default function Home() {
           className="profileRelationsArea"
           style={{ gridArea: "profileRelationsArea" }}
         >
+          <ProfileRelationsBox title="Seguidores" items={seguidores} />
           <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
-            <ul>
+            <h2>Comunidades ({comunidades.length})</h2>
+            <ul className="limitSize">
               {comunidades.map((itemAtual) => {
                 return (
                   <li>
@@ -130,7 +166,7 @@ export default function Home() {
             <h2 className="smallTitle">
               Pessoas da comunidade ({pessoasFavoritas.length})
             </h2>
-            <ul>
+            <ul className="limitSize">
               {pessoasFavoritas.map((itemAtual) => {
                 return (
                   <li>
