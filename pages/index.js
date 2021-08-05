@@ -32,7 +32,6 @@ function ProfileSidebar(propriedades) {
       </p>
       {/* hr: usada para separar o conteúdo um do outro */}
       <hr />
-
       <AlurakutProfileSidebarMenuDefault />
     </Box>
   );
@@ -65,16 +64,17 @@ export default function Home() {
   const pessoasFavoritas = ["omariosouto", "peas", "diego3g"];
 
   const [comunidades, setComunidades] = useState([
-    {
-      id: uuidv4(),
-      titulo: "Eu odeio acordar cedo",
-      imagem: "https://alurakut.vercel.app/capa-comunidade-01.jpg",
-    },
+    // {
+    //   id: uuidv4(),
+    //   titulo: "Eu odeio acordar cedo",
+    //   imagem: "https://alurakut.vercel.app/capa-comunidade-01.jpg",
+    // },
   ]);
 
   const [seguidores, setSeguidores] = useState([]);
 
   useEffect(() => {
+    // GET
     fetch("https://api.github.com/users/peas/followers")
       .then((respostaDoServidor) => {
         return respostaDoServidor.json();
@@ -84,13 +84,43 @@ export default function Home() {
       });
     // []: 2° parametro que especificia qnd ele irá atualizar dependendo da variavel passada para ele
     // ele sendo vazio, irá executar apenas uma vez
+
+    // API GraphQL
+
+    fetch("https://graphql.datocms.com/", {
+      method: "POST",
+      headers: {
+        Authorization: "dd51b7dc562d7693991948ec695b2a",
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        // Consulta para a API
+        query: `
+      query{
+        allCommunities {
+          title
+          id
+          imageUrl
+          creatorSlug
+        }
+      }
+      `,
+      }),
+    })
+      .then((response) => response.json())
+      .then((respostaCompleta) => {
+        const comunidadesVindaDoDato = respostaCompleta.data.allCommunities;
+        setComunidades(comunidadesVindaDoDato);
+        console.log(respostaCompleta);
+      });
   }, []);
 
   return (
     <>
       <AlurakutMenu />
       <MainGrid>
-        <div className="profileArea" style={{ gridArea: "profileArea" }}>
+        <div className="profileArea" menu style={{ gridArea: "profileArea" }}>
           <ProfileSidebar githubUser={githubUser} />
         </div>
 
@@ -112,13 +142,26 @@ export default function Home() {
                 const dadosDoForm = new FormData(e.target);
 
                 const comunidade = {
-                  id: uuidv4(),
-                  titulo: dadosDoForm.get("titulo"),
-                  imagem: dadosDoForm.get("imagem"),
+                  title: dadosDoForm.get("titulo"),
+                  imageUrl: dadosDoForm.get("imagem"),
+                  creatorSlug: githubUser,
                 };
 
-                const comunidadesAtualizadas = [...comunidades, comunidade];
-                setComunidades(comunidadesAtualizadas);
+                //Chamando meu servidor localizado no pages
+                fetch("/api/comunidades", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(comunidade),
+                }).then(async (response) => {
+                  const dados = await response.json();
+
+                  const comunidade = dados.registroCriado;
+
+                  const comunidadesAtualizadas = [...comunidades, comunidade];
+                  setComunidades(comunidadesAtualizadas);
+                });
               }}
             >
               <div>
@@ -152,9 +195,9 @@ export default function Home() {
               {comunidades.map((itemAtual) => {
                 return (
                   <li>
-                    <a href={`/users/${itemAtual.titulo}`} key={itemAtual.id}>
-                      <img src={itemAtual.imagem} />
-                      <span>{itemAtual.titulo}</span>
+                    <a href={`/comunidades/${itemAtual.id}`} key={itemAtual.id}>
+                      <img src={itemAtual.imageUrl} />
+                      <span>{itemAtual.title}</span>
                     </a>
                   </li>
                 );
