@@ -32,4 +32,4 @@ yarn-error.log*
 
 # vercel
 .vercel
-pages/api/comunidades.js
+pages/api/comunidades.example.js
