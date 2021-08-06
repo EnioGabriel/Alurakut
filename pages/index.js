@@ -2,6 +2,8 @@
 import MainGrid from "../src/componentes/MainGrid";
 import Box from "../src/componentes/Box";
 import { v4 as uuidv4 } from "uuid";
+import nookies from "nookies";
+import jwt from "jsonwebtoken";
 
 import {
   AlurakutMenu,
@@ -59,8 +61,8 @@ function ProfileRelationsBox(propriedades) {
   );
 }
 
-export default function Home() {
-  const githubUser = "EnioGabriel";
+export default function Home(props) {
+  const githubUser = props.githubUser;
   const pessoasFavoritas = ["omariosouto", "peas", "diego3g"];
 
   const [comunidades, setComunidades] = useState([
@@ -75,7 +77,7 @@ export default function Home() {
 
   useEffect(() => {
     // GET
-    fetch("https://api.github.com/users/peas/followers")
+    fetch(`https://api.github.com/users/${githubUser}/followers`)
       .then((respostaDoServidor) => {
         return respostaDoServidor.json();
       })
@@ -226,4 +228,28 @@ export default function Home() {
       </MainGrid>
     </>
   );
+}
+
+// Permite que enquanto a pagina esta sendo montada, vc decida se quer renderizar ou encaminhar para uma autenticação( como nesse caso)
+export async function getServerSideProps(context) {
+  const cookies = nookies.get(context);
+  const token = cookies.USER_TOKEN;
+  // Pegando os cookies com dados do usário codificado e decoficando
+  const githubUser = decodedToken?.githubUser;
+
+  if (!githubUser) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  const dadosUserGithubDecoded = jwt.decode(token).githubUser;
+  return {
+    props: {
+      githubUser: dadosUserGithubDecoded,
+    },
+  };
 }
