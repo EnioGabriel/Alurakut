@@ -134,7 +134,7 @@ export default function Home(props) {
           </Box>
 
           <Box>
-            <h2 className="subTitle">O que você deseja fazer</h2>
+            <h2 className="subTitle">Crie sua comunidade</h2>
             <form
               onSubmit={function handleCriaComunidade(e) {
                 // Previnindo autoupdate da pagina
@@ -230,14 +230,11 @@ export default function Home(props) {
   );
 }
 
-// Permite que enquanto a pagina esta sendo montada, vc decida se quer renderizar ou encaminhar para uma autenticação( como nesse caso)
+// Permite que enquanto a pagina esta sendo renderizada, vc decida se quer renderizar ou encaminhar para uma autenticação( como nesse caso)
 export async function getServerSideProps(context) {
   const cookies = nookies.get(context);
-  const token = cookies.USER_TOKEN;
-  // Pegando os cookies com dados do usário codificado e decoficando
-  const githubUser = decodedToken?.githubUser;
-
-  if (!githubUser) {
+  // Impede acesso da dashboard caso nao possua um cookie
+  if (!cookies.USER_TOKEN) {
     return {
       redirect: {
         destination: "/login",
@@ -246,10 +243,32 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const dadosUserGithubDecoded = jwt.decode(token).githubUser;
+  //Verificando se o token é valido
+  const token = cookies.USER_TOKEN;
+  const { isAuthenticated } = await fetch(
+    "https://alurakut-vinixiii.vercel.app/api/auth",
+    {
+      headers: {
+        Authorization: token,
+      },
+    }
+  )
+    .then((resposta) => resposta.json())
+    .catch((err) => console.error(err));
+
+  if (!isAuthenticated) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  const { githubUser } = jwt.decode(token);
   return {
     props: {
-      githubUser: dadosUserGithubDecoded,
+      githubUser,
     },
   };
 }
