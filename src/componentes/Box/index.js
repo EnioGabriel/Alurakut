@@ -30,10 +30,6 @@ const Box = styled.div`
     color: #333333;
     margin-bottom: 20px;
   }
-  /* Definindo limite maximo de 6 itens para mostrar nas listas */
-  .limitSize li:nth-of-type(1n + 7) {
-    display: none;
-  }
   hr {
     margin-top: 12px;
     margin-bottom: 8px;
