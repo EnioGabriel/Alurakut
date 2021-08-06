@@ -120,7 +120,7 @@ export default function Home(props) {
 
   return (
     <>
-      <AlurakutMenu />
+      <AlurakutMenu githubUser={githubUser} />
       <MainGrid>
         <div className="profileArea" menu style={{ gridArea: "profileArea" }}>
           <ProfileSidebar githubUser={githubUser} />

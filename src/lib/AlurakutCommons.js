@@ -190,7 +190,7 @@ function AlurakutMenuProfileSidebar({ githubUser }) {
       <div>
         <img
           src={`https://github.com/${githubUser}.png`}
-          style={{ borderRadius: "8px" }}
+          style={{ borderRadius: "8px", width: "50%", margin: "0 auto" }}
         />
         <hr />
         <p>
