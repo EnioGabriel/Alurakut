@@ -6,7 +6,7 @@ import nookies from "nookies";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [githubUser, setGithubUser] = useState("omariosouto");
+  const [githubUser, setGithubUser] = useState("");
 
   return (
     <main
@@ -79,7 +79,6 @@ export default function LoginPage() {
                 setGithubUser(evento.target.value);
               }}
             />
-            {githubUser.length === 0 ? "Preencha o campo" : ""}
             <button type="submit">Login</button>
           </form>
 
