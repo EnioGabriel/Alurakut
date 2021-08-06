@@ -45,18 +45,25 @@ function ProfileRelationsBox(propriedades) {
       <h2 className="smallTitle">
         {propriedades.title} ({propriedades.items.length})
       </h2>
-      {/* <ul>
-        {seguidores.map((itemAtual) => {
-          return (
-            <li>
-              <a href={`https://github.com${itemAtual}.png`} key={itemAtual.id}>
-                <img src={itemAtual} />
-                <span>{itemAtual}</span>
-              </a>
-            </li>
-          );
-        })}
-      </ul> */}
+      {
+        <ul>
+          {propriedades.items.slice(0, 6).map((itemAtual) => {
+            return (
+              <li key={itemAtual.id}>
+                <a
+                  href={itemAtual.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Site do usuário"
+                >
+                  <img src={itemAtual.avatar_url} alt="Avatar do usuário" />
+                  <span>{itemAtual.login}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      }
     </ProfileRelationsBoxWrapper>
   );
 }
@@ -65,15 +72,9 @@ export default function Home(props) {
   const githubUser = props.githubUser;
   const pessoasFavoritas = ["omariosouto", "peas", "diego3g"];
 
-  const [comunidades, setComunidades] = useState([
-    // {
-    //   id: uuidv4(),
-    //   titulo: "Eu odeio acordar cedo",
-    //   imagem: "https://alurakut.vercel.app/capa-comunidade-01.jpg",
-    // },
-  ]);
-
   const [seguidores, setSeguidores] = useState([]);
+
+  const [comunidades, setComunidades] = useState([]);
 
   useEffect(() => {
     // GET
@@ -88,7 +89,6 @@ export default function Home(props) {
     // ele sendo vazio, irá executar apenas uma vez
 
     // API GraphQL
-
     fetch("https://graphql.datocms.com/", {
       method: "POST",
       headers: {
@@ -193,8 +193,8 @@ export default function Home(props) {
           <ProfileRelationsBox title="Seguidores" items={seguidores} />
           <ProfileRelationsBoxWrapper>
             <h2>Comunidades ({comunidades.length})</h2>
-            <ul className="limitSize">
-              {comunidades.map((itemAtual) => {
+            <ul>
+              {comunidades.slice(0, 6).map((itemAtual) => {
                 return (
                   <li>
                     <a href={`/comunidades/${itemAtual.id}`} key={itemAtual.id}>
@@ -211,8 +211,8 @@ export default function Home(props) {
             <h2 className="smallTitle">
               Pessoas da comunidade ({pessoasFavoritas.length})
             </h2>
-            <ul className="limitSize">
-              {pessoasFavoritas.map((itemAtual) => {
+            <ul>
+              {pessoasFavoritas.slice(0, 6).map((itemAtual) => {
                 return (
                   <li>
                     <a href={`/users/${itemAtual}`} key={uuidv4()}>
