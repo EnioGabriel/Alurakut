@@ -82,14 +82,14 @@ export default function LoginPage() {
             <button type="submit">Login</button>
           </form>
 
-          <footer className="box">
+          {/* <footer className="box">
             <p>
               Ainda não é membro? <br />
               <a href="/login">
                 <strong>ENTRAR JÁ</strong>
               </a>
             </p>
-          </footer>
+          </footer> */}
         </section>
 
         <footer className="footerArea">

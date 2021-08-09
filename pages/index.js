@@ -47,6 +47,8 @@ function ProfileRelationsBox(propriedades) {
       </h2>
       {
         <ul>
+          {/* .slice(0, 6): Pega os 6 primeiros usuários no array */}
+          {/* mas tbm poderia pegar os 6 ultimos, basta trocar por 'slice(-6)' */}
           {propriedades.items.slice(0, 6).map((itemAtual) => {
             return (
               <li key={itemAtual.id}>
@@ -128,7 +130,7 @@ export default function Home(props) {
 
         <div className="welcomeArea" style={{ gridArea: "welcomeArea" }}>
           <Box>
-            <h1 className="title">Bem vindo(a)</h1>
+            <h1 className="title">Bem vindo(a)!</h1>
 
             <OrkutNostalgicIconSet />
           </Box>
@@ -192,7 +194,7 @@ export default function Home(props) {
         >
           <ProfileRelationsBox title="Seguidores" items={seguidores} />
           <ProfileRelationsBoxWrapper>
-            <h2>Comunidades ({comunidades.length})</h2>
+            <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
             <ul>
               {comunidades.slice(0, 6).map((itemAtual) => {
                 return (
