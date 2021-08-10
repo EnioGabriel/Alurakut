@@ -72,14 +72,14 @@ function ProfileRelationsBox(propriedades) {
 
 export default function Home(props) {
   const githubUser = props.githubUser;
-  const pessoasFavoritas = ["omariosouto", "peas", "diego3g"];
 
   const [seguidores, setSeguidores] = useState([]);
+  const [seguindo, setSeguindo] = useState([]);
 
   const [comunidades, setComunidades] = useState([]);
 
   useEffect(() => {
-    // GET
+    // GET SEGUIDORES
     fetch(`https://api.github.com/users/${githubUser}/followers`)
       .then((respostaDoServidor) => {
         return respostaDoServidor.json();
@@ -89,6 +89,15 @@ export default function Home(props) {
       });
     // []: 2° parametro que especificia qnd ele irá atualizar dependendo da variavel passada para ele
     // ele sendo vazio, irá executar apenas uma vez
+
+    // GET SEGUINDO
+    fetch(`https://api.github.com/users/${githubUser}/following`)
+      .then((respostaDoServidor) => {
+        return respostaDoServidor.json();
+      })
+      .then((respostaCompleta) => {
+        setSeguindo(respostaCompleta);
+      });
 
     // API GraphQL
     fetch("https://graphql.datocms.com/", {
@@ -192,7 +201,6 @@ export default function Home(props) {
           className="profileRelationsArea"
           style={{ gridArea: "profileRelationsArea" }}
         >
-          <ProfileRelationsBox title="Seguidores" items={seguidores} />
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
             <ul>
@@ -208,24 +216,8 @@ export default function Home(props) {
               })}
             </ul>
           </ProfileRelationsBoxWrapper>
-
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">
-              Pessoas da comunidade ({pessoasFavoritas.length})
-            </h2>
-            <ul>
-              {pessoasFavoritas.slice(0, 6).map((itemAtual) => {
-                return (
-                  <li>
-                    <a href={`/users/${itemAtual}`} key={uuidv4()}>
-                      <img src={`https://github.com/${itemAtual}.png`} />
-                      <span>{itemAtual}</span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
+          <ProfileRelationsBox title="Seguindo" items={seguindo} />
+          <ProfileRelationsBox title="Seguidores" items={seguidores} />
         </div>
       </MainGrid>
     </>
